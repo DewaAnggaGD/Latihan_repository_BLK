@@ -29,7 +29,7 @@
                         <form action="" method="post">
                             <!-- Ini akan berisi halaman form-->
                             <div class="form-floating mb-1">
-                                <input type="text" name="nama"  class="form-control" id="Nama"
+                                <input type="text" name="nama" class="form-control" id="Nama"
                                     placeholder="name@example.com" Required>
                                 <label for="fiNama">Nama</label>
                             </div>
@@ -43,7 +43,23 @@
                                     id="Alamat" Required></textarea>
                                 <label for="floatingTextarea">Alamat</label>
                             </div>
-
+                            <div class="border border-secondary-subtle mt-2 mb-2">
+                            <label for="" class="mb-2 ms-2">Jenis Kelamin</label>
+                            <div class="form-check ms-2">
+                                <input class="form-check-input" type="radio" name="gender"
+                                    id="lk" value="Laki-laki">
+                                <label class="form-check-label" for="flexRadioDefault1">
+                                    Laki-Laki
+                                </label>
+                            </div>
+                            <div class="form-check ms-2">
+                                <input class="form-check-input" type="radio" name="gender"
+                                    id="pr" value="Perempuan">
+                                <label class="form-check-label" for="flexRadioDefault2">
+                                   Perempuan
+                                </label>
+                            </div>
+                            </div>
                             <div class="form-floating mt-2">
                                 <select class="form-select" name="program" id="Program"
                                     aria-label="Floating label select example" Required>
@@ -57,7 +73,7 @@
                             </div>
 
                             <div class="form-floating mt-2">
-                                <select class="form-select" name="tahunDaftar" id="Tahun"
+                                <select class="form-select" name="tahun" id="Tahun"
                                     aria-label="Floating label select example" Required>
                                     <option value="" selected disabled>Pilih Tahun</option>
                                     <?php
@@ -74,7 +90,7 @@
                     </div>
                     <div class="card-footer text-center">
                         <!-- spinner -->
-                        <div class="spinner-border text-primary" role="status"  style="display:none">
+                        <div class="spinner-border text-primary" role="status" style="display:none">
                         </div>
                         <div class="table-responsive">
                             <table class="table">
@@ -83,6 +99,7 @@
                                         <th>Nama</th>
                                         <th>Email</th>
                                         <th>Alamat</th>
+                                        <th>Jenis Kelamin</th>
                                         <th>Program</th>
                                         <th>Tahun</th>
                                     </tr>
@@ -109,6 +126,22 @@
 
     <script>
     $(document).ready(function() {
+        getData();
+
+        function getData() {
+            $.ajax({
+                type: "GET",
+                url: "getData.php",
+                beforeSend: function(result) {
+                    $(".spinner-border").show();
+                },
+                success: function(result) {
+                    $(".spinner-border").hide(1000);
+                    $("tbody").html(result);
+                    // $("form")[0].reset();
+                }
+            })
+        }
         // event ketika form di submit
         $("form").submit(function(event) {
             event.preventDefault();
@@ -118,24 +151,27 @@
             var alamat = $("#Alamat").val();
             var program = $("#Program").val();
             var tahun = $("#Tahun").val();
+            var gender = $("input[name='gender']:checked").val();
             var formData = {
-                nama:nama,
-                email:email,
-                alamat:alamat,
-                program:program,
-                tahun:tahun
+                nama: nama,
+                email: email,
+                alamat: alamat,
+                program: program,
+                tahun: tahun,
+                gender:gender
             }
             $("form").trigger("reset");
             $.ajax({
                 type: "POST",
                 url: "process.php",
                 data: formData,
-                beforeSend:function(result) {
+                beforeSend: function(result) {
                     $(".spinner-border").show();
                 },
-                success:function(result) {
+                success: function(result) {
                     $(".spinner-border").hide(1000);
                     $("tbody").append(result);
+                    getData();
                     // $("form")[0].reset();
                 }
             })
